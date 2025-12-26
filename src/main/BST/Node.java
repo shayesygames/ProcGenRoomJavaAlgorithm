@@ -1,10 +1,16 @@
-package Main.BST;
+package BST;
 
+//Implementation of BST, stores typical BST left, right and data
+//also stores connection nodes, which represent rooms that can
+//have a connection to this node on the final map, only used
+//for leaves on the tree
 public class Node {
 
     RoomInfo roomInfo;
     Node leftNode;
     Node rightNode;
+    //should connections be owned by the rooms instead?
+    //does it matter?
     Node connectionNode1;
     Node connectionNode2;
 
@@ -76,10 +82,10 @@ public class Node {
     public boolean equals(Node candidateNode) {
         RoomInfo thisRoom = this.roomInfo;
         RoomInfo candidateRoom = candidateNode.getRoomInfo();
-        return thisRoom.roomId == candidateRoom.roomId;
+        return thisRoom.getRoomId() == candidateRoom.getRoomId();
     }
 
-    //prints unorganized list of rooms
+    //prints info about this room and id's of connections
     public void printRoomInfo() {
         RoomInfo roomInfo = this.getRoomInfo();
         System.out.println("Room info: ");
@@ -106,10 +112,6 @@ public class Node {
 
     //check if there are rooms available
     public boolean hasFreeRoom() {
-        boolean hasFreeRooms = connectionNode1 == null || connectionNode2 == null;
-//        if (!hasFreeRooms) {
-//            System.out.println("connection cannot be made, no free Rooms");
-//        }
-        return hasFreeRooms;
+        return connectionNode1 == null || connectionNode2 == null;
     }
 }

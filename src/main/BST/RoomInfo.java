@@ -45,7 +45,7 @@ public class RoomInfo {
         this.roomId = roomId;
     }
 
-    public int getRoomId() {
-        return roomId;
+    public String getRoomId() {
+        return "" + roomId;
     }
 }

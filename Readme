@@ -6,8 +6,10 @@ This project is to test implementations of Procedural Room Generation Algorithms
 12/28/25
  - added testing around room connection generation, tests known happy path (good connection created) and known bad scenarios (rooms that cannot be connected)
  - added initial pass at visual representation in JFrame, room drawing is simple enough, but figuring out the coords for the connections/doors is proving somewhat difficult
+ - room connection generation issue found, rooms only connect to themselves
 
  Goals/Next steps
+  - NEXT: Issue found with connection builder, room generates connections to itself
   - Added initial renderer, still does not cover all cases for types of connections, needs work
   - implement rooms that can have randomized sizes, aka rooms that will not always have one wall of the minimum length
   - update division method to allow that a room with length > minimum size and height = minimum size are able to be divided, but only by length

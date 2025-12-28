@@ -29,6 +29,7 @@ public class MapRenderer extends JPanel {
             int roomWidth = currentRoom.getRoomInfo().getWidth() * 100;
             int roomHeight = currentRoom.getRoomInfo().getHeight() * 100;
             drawRectangle(g2d, roomX + 25, roomY + 25, roomWidth, roomHeight, true);
+            drawId(g2d, roomX + 25, roomY + 25, roomWidth, roomHeight, currentRoom.getRoomInfo().getRoomId());
         }
 
         //draw connections
@@ -185,6 +186,13 @@ public class MapRenderer extends JPanel {
         }
         Rectangle2D rectRoom = new Rectangle2D.Double(x, y, width, height);
         g2d.fill(rectRoom);
+    }
+
+    private void drawId(Graphics2D g2d, double x, double y, double width, double height, String id) {
+        g2d.setColor(Color.BLACK);
+        double stringX = x + .5 * width;
+        double stringY = y + .5 * height;
+        g2d.drawString(id, (int) stringX, (int) stringY);
     }
 
 }

@@ -125,7 +125,7 @@ public class MapRenderer extends JPanel {
             //Case 2:
             if (currentSharedX && currentSharedY) {
                 //rooms share a vertical wall, modify Y
-                if (currentOriginX == connectedRoomOriginX + connectionWidth) {
+                if (areDoublesEqual(currentOriginX, connectedRoomOriginX + connectionWidth)) {
                     double connectionMaxY = connectedRoomOriginY + connectionHeight;
                     double currentMaxY = currentOriginY + currentHeight;
                     double maxHeightForConnection = Math.min(connectionMaxY, currentMaxY);
@@ -133,7 +133,7 @@ public class MapRenderer extends JPanel {
                     newOriginY = newOriginY + (.5 * (maxHeightForConnection - newOriginY));
                 }
                 //share a horizontal wall, modify X
-                else if (currentOriginY == connectedRoomOriginY + connectionHeight) {
+                else if (areDoublesEqual(currentOriginY, connectedRoomOriginY + connectionHeight)) {
                     double connectionMaxX = connectedRoomOriginX + connectionWidth;
                     double currentMaxX = currentOriginX + currentWidth;
                     double maxWidthForConnection = Math.min(connectionMaxX, currentMaxX);
@@ -142,7 +142,7 @@ public class MapRenderer extends JPanel {
                 }
             } else if (connectionSharedX && connectionSharedY) {
                 //share vertical wall, modify Y
-                if (connectedRoomOriginX == currentOriginX + currentWidth) {
+                if (areDoublesEqual(connectedRoomOriginX, currentOriginX + currentWidth)) {
                     double connectionMaxY = connectedRoomOriginY + connectionHeight;
                     double currentMaxY = currentOriginY + currentHeight;
                     double maxHeightForConnection = Math.min(connectionMaxY, currentMaxY);
@@ -150,7 +150,7 @@ public class MapRenderer extends JPanel {
                     newOriginY = newOriginY + (.5 * (maxHeightForConnection - newOriginY));
                 }
                 //share a horizontal wall, modify X
-                else if (connectedRoomOriginY == currentOriginX + currentHeight) {
+                else if (areDoublesEqual(connectedRoomOriginY, currentOriginX + currentHeight)) {
                     double connectionMaxX = connectedRoomOriginX + connectionWidth;
                     double currentMaxX = currentOriginX + currentWidth;
                     double maxWidthForConnection = Math.min(connectionMaxX, currentMaxX);
@@ -193,6 +193,10 @@ public class MapRenderer extends JPanel {
         double stringX = x + .5 * width;
         double stringY = y + .5 * height;
         g2d.drawString(id, (int) stringX, (int) stringY);
+    }
+
+    private boolean areDoublesEqual(double d1, double d2) {
+        return Math.abs(d1 - d2) < .1;
     }
 
 }

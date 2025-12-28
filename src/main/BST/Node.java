@@ -82,7 +82,7 @@ public class Node {
     public boolean equals(Node candidateNode) {
         RoomInfo thisRoom = this.roomInfo;
         RoomInfo candidateRoom = candidateNode.getRoomInfo();
-        return thisRoom.getRoomId() == candidateRoom.getRoomId();
+        return thisRoom.getRoomId().equals(candidateRoom.getRoomId());
     }
 
     //prints info about this room and id's of connections

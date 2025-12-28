@@ -94,12 +94,12 @@ public class Node {
         System.out.println("Height x Witdth (" + roomInfo.getHeight() + ", " + roomInfo.getWidth() + ")");
 
         if (connectionNode1 != null || connectionNode2 != null) {
-            System.out.println("connections: " + getRoomIdFromConnection());
+            System.out.println("connections: " + getRoomIdFromConnections());
         }
     }
 
     //get rooms connected to this node
-    public String getRoomIdFromConnection() {
+    public String getRoomIdFromConnections() {
         String result = "";
         if (connectionNode1 != null) {
             result = result + connectionNode1.getRoomInfo().getRoomId() + ", ";

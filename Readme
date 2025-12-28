@@ -9,8 +9,14 @@ This project is to test implementations of Procedural Room Generation Algorithms
  - room connection generation issue found, rooms only connect to themselves
    - fixed, faulty comparison issue
  - added some safety around double comparisons
+ - noted connection issue for diagonal rooms, need to check/update
 
  Goals/Next steps
+  - connection generation is still flawed with diagonal rooms
   - Added initial renderer, still does not cover all cases for types of connections, needs work
+    - part of this issue is due to renderer visually displaying inverted y values as part of JPanel, look into reversing these
+    - issue looks like it is with case 1...potential bad inputs in the method call since case 1 is so simple?
+    - add debug statements to figure out what is happening for each comparison
+    - maybe this is not actually an error, just uncompleted case 3 causing default values to return
   - implement rooms that can have randomized sizes, aka rooms that will not always have one wall of the minimum length
   - update division method to allow that a room with length > minimum size and height = minimum size are able to be divided, but only by length

@@ -34,6 +34,7 @@ public class MapRenderer extends JPanel {
 
         //draw connections
         for (Node currentRoom : rooms) {
+            System.out.println("\n\n\nstarting connections drawing");
             if (currentRoom.getConnectionNode1() != null) {
                 double currentOriginX = currentRoom.getRoomInfo().getOriginX();
                 double currentOriginY = currentRoom.getRoomInfo().getOriginY();
@@ -50,7 +51,14 @@ public class MapRenderer extends JPanel {
                 connectionOriginX = Math.max(currentOriginX, connectedRoomOriginX);
                 connectionOriginY = Math.max(currentOriginY, connectedRoomOriginY);
 
-                List<Double> connectionCoords = chooseHeightWidthModification(connectionOriginX,
+                System.out.printf("attempting to draw connection between %s and %s\n",
+                        currentRoom.getRoomInfo().getRoomId(),
+                        currentRoom.getConnectionNode1().getRoomInfo().getRoomId());
+                System.out.println("currentRoom origin: " + currentOriginX + ", " + currentOriginY);
+                System.out.println("connectionRoom origin: " + connectedRoomOriginX + ", " + connectedRoomOriginY);
+                System.out.println("connection origin: " + connectionOriginX + ", " + connectionOriginY);
+
+                List<Double> connectionCoords = updateConnectionOriginBasedOnAvailableConnectionSpace(connectionOriginX,
                         connectionOriginY,
                         currentOriginX,
                         currentOriginY,
@@ -68,26 +76,16 @@ public class MapRenderer extends JPanel {
         }
     }
 
-    //width comes as 0, height comes as 1
-    private List<Double> chooseHeightWidthModification(double newOriginX,
-                                                       double newOriginY,
-                                                       double currentOriginX,
-                                                       double currentOriginY,
-                                                       double connectedRoomOriginX,
-                                                       double connectedRoomOriginY,
-                                                       double currentWidth,
-                                                       double currentHeight,
-                                                       double connectionWidth,
-                                                       double connectionHeight) {
-
-        //check if new origin exceeds either greater boundary of either shape
-        //i.e. if shape 1 has origin 0,0 with L=1 H=2 and shape 2 has origin 1,1 and L=1 H=1
-        //shape 2 origin exceeds X axis of shape 1 boundaries since shape 2 originX = shape 1 originX + shape 1 L
-        //but does not exceed on Y axis since shape2 originY < shape 1 origin Y + shape 1 H
-        //since X exceeds, we allow the x to stay the same and add .5 shape 2 H to newOriginY
-
-        //if originX/Y + shape1 H/W does not exceed shape2 originX/Y + shape2 H/W then can just use simple
-        //originX/Y + .5 shape1 H/W
+    private List<Double> updateConnectionOriginBasedOnAvailableConnectionSpace(double newOriginX,
+                                                                               double newOriginY,
+                                                                               double currentOriginX,
+                                                                               double currentOriginY,
+                                                                               double connectedRoomOriginX,
+                                                                               double connectedRoomOriginY,
+                                                                               double currentWidth,
+                                                                               double currentHeight,
+                                                                               double connectionWidth,
+                                                                               double connectionHeight) {
         boolean currentSharedX = false;
         boolean currentSharedY = false;
         boolean connectionSharedX = false;
@@ -118,44 +116,53 @@ public class MapRenderer extends JPanel {
 
         //Case 1:
         if (currentSharedX && connectionSharedX) {
-            newOriginX = newOriginX + ((currentWidth < connectionWidth) ? currentWidth * .5 : connectionWidth * .5);
+            System.out.println("Case 1 shared X");
+            newOriginX = newOriginX + (Math.min(currentWidth, connectionWidth) / 2);
         } else if (currentSharedY && connectionSharedY) {
-            newOriginY = newOriginY + ((currentHeight < connectionHeight) ? currentHeight * .5 : connectionHeight * .5);
+            System.out.println("Case 1 shared Y");
+            newOriginY = newOriginY + (Math.min(currentHeight, connectionHeight) / 2);
         } else {
             //Case 2:
+            System.out.println("Case 2");
             if (currentSharedX && currentSharedY) {
+                System.out.println("current origin == connection origin");
                 //rooms share a vertical wall, modify Y
                 if (areDoublesEqual(currentOriginX, connectedRoomOriginX + connectionWidth)) {
                     double connectionMaxY = connectedRoomOriginY + connectionHeight;
                     double currentMaxY = currentOriginY + currentHeight;
-                    double maxHeightForConnection = Math.min(connectionMaxY, currentMaxY);
+                    double maxYForConnection = Math.min(connectionMaxY, currentMaxY);
+                    double newHeight = ((maxYForConnection - newOriginY) / 2);
                     //currentY is lower bound, smallest between connectionMaxY and currentMaxY is upper bound
-                    newOriginY = newOriginY + (.5 * (maxHeightForConnection - newOriginY));
+                    newOriginY = newOriginY + newHeight;
                 }
                 //share a horizontal wall, modify X
                 else if (areDoublesEqual(currentOriginY, connectedRoomOriginY + connectionHeight)) {
                     double connectionMaxX = connectedRoomOriginX + connectionWidth;
                     double currentMaxX = currentOriginX + currentWidth;
-                    double maxWidthForConnection = Math.min(connectionMaxX, currentMaxX);
+                    double maxXForConnection = Math.min(connectionMaxX, currentMaxX);
+                    double newWidth = ((maxXForConnection - newOriginX) / 2);
                     //currentY is lower bound, smallest between connectionMaxX and currentMaxX is upper bound
-                    newOriginX = newOriginX + (.5 * (maxWidthForConnection - newOriginX));
+                    newOriginX = newOriginX + newWidth;
                 }
             } else if (connectionSharedX && connectionSharedY) {
+                System.out.println("connectionRoom origin == connection origin");
                 //share vertical wall, modify Y
                 if (areDoublesEqual(connectedRoomOriginX, currentOriginX + currentWidth)) {
                     double connectionMaxY = connectedRoomOriginY + connectionHeight;
                     double currentMaxY = currentOriginY + currentHeight;
-                    double maxHeightForConnection = Math.min(connectionMaxY, currentMaxY);
+                    double maxYForConnection = Math.min(connectionMaxY, currentMaxY);
+                    double newHeight = ((maxYForConnection - newOriginY) / 2);
                     //currentY is lower bound, smallest between connectionMaxY and currentMaxY is upper bound
-                    newOriginY = newOriginY + (.5 * (maxHeightForConnection - newOriginY));
+                    newOriginY = newOriginY + newHeight;
                 }
                 //share a horizontal wall, modify X
-                else if (areDoublesEqual(connectedRoomOriginY, currentOriginX + currentHeight)) {
+                else if (areDoublesEqual(connectedRoomOriginY, currentOriginY + currentHeight)) {
                     double connectionMaxX = connectedRoomOriginX + connectionWidth;
                     double currentMaxX = currentOriginX + currentWidth;
-                    double maxWidthForConnection = Math.min(connectionMaxX, currentMaxX);
+                    double maxXForConnection = Math.min(connectionMaxX, currentMaxX);
+                    double newWidth = ((maxXForConnection - newOriginX) / 2);
                     //currentY is lower bound, smallest between connectionMaxX and currentMaxX is upper bound
-                    newOriginX = newOriginX + (.5 * (maxWidthForConnection - newOriginX));
+                    newOriginX = newOriginX + newWidth;
                 }
             }
 

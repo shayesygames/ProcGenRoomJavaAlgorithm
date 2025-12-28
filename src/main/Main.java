@@ -49,7 +49,7 @@ public class Main {
         JFrame map = new JFrame("Graph result");
         map.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         map.add(new MapRenderer(leaves));
-        map.setSize(1000, 1000);
+        map.setSize(750, 750);
         map.setVisible(true);
 
     }

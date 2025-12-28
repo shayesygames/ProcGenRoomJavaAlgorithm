@@ -5,6 +5,9 @@ import java.util.concurrent.ThreadLocalRandom;
 import BST.Node;
 import BST.Edge;
 import BST.RoomInfo;
+import renderer.MapRenderer;
+
+import javax.swing.*;
 
 
 public class Main {
@@ -41,6 +44,13 @@ public class Main {
             node.printRoomInfo();
             System.out.println();
         }
+
+        //render results to visual
+        JFrame map = new JFrame("Graph result");
+        map.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        map.add(new MapRenderer(leaves));
+        map.setSize(1500, 1500);
+        map.setVisible(true);
 
     }
 

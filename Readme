@@ -1,12 +1,13 @@
 This project is to test implementations of Procedural Room Generation Algorithms, specifically looking at using Binary Search trees to divide up a space on a coordinate grid into individual "rooms" and how those rooms can be connected together before creating an implementation in Unity or Unreal or Godot.
 
-Summary of work
+12/26/25
  - Initial work completed to create and divide rooms on a 2D grid, rooms are not very varied at this point, mostly conforming to a simple set of rules that can be modified later once the implementation is better understood
- - as of 12/26/2025, the project has a working algorithm for 2D room generation, connections algorithm has initial work done and appears to be mostly functioning correctly, though testing around this needs to be done
- -
+ - the project has a working algorithm for 2D room generation, connections algorithm has initial work done and appears to be mostly functioning correctly, though testing around this needs to be done
+12/28/25
+ - added testing around room connection generation, tests known happy path (good connection created) and known bad scenarios (rooms that cannot be connected)
+ - added initial pass at visual representation in JFrame, room drawing is simple enough, but figuring out the coords for the connections/doors is proving somewhat difficult
 
  Goals/Next steps
-  - implement testing of known bad connection scenarios
-  - add simple rendering component to replace text printout of results
+  - Added initial renderer, still does not cover all cases for types of connections, needs work
   - implement rooms that can have randomized sizes, aka rooms that will not always have one wall of the minimum length
   - update division method to allow that a room with length > minimum size and height = minimum size are able to be divided, but only by length

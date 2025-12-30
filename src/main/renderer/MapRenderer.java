@@ -11,8 +11,10 @@ import java.awt.geom.Rectangle2D;
 public class MapRenderer extends JPanel {
 
     List<Node> rooms;
+    int gridSize;
 
-    public MapRenderer(List<Node> rooms) {
+    public MapRenderer(List<Node> rooms, int gridSize) {
+        this.gridSize = gridSize;
         this.rooms = rooms;
     }
 
@@ -24,12 +26,13 @@ public class MapRenderer extends JPanel {
 
         //draw rooms
         for (Node currentRoom : rooms) {
-            int roomX = currentRoom.getRoomInfo().getOriginX() * 100;
-            int roomY = currentRoom.getRoomInfo().getOriginY() * 100;
             int roomWidth = currentRoom.getRoomInfo().getWidth() * 100;
             int roomHeight = currentRoom.getRoomInfo().getHeight() * 100;
-            drawRectangle(g2d, roomX + 25, roomY + 25, roomWidth, roomHeight, true);
-            drawId(g2d, roomX + 25, roomY + 25, roomWidth, roomHeight, currentRoom.getRoomInfo().getRoomId());
+            int roomX = currentRoom.getRoomInfo().getOriginX() * 100;
+            //here the Y coords are inverted...this may be more trouble than it's worth, may revert
+            int roomY = (gridSize - currentRoom.getRoomInfo().getOriginY() - currentRoom.getRoomInfo().getHeight()) * 100;
+            drawRectangle(g2d, roomX, roomY, roomWidth, roomHeight, true);
+            drawId(g2d, roomX, roomY, roomWidth, roomHeight, currentRoom.getRoomInfo().getRoomId());
         }
 
         //draw connections
@@ -69,7 +72,7 @@ public class MapRenderer extends JPanel {
                         connectedRoomWidth,
                         connectedRoomHeight);
 
-                drawRectangle(g2d, connectionCoords.get(0) * 100 + 25, connectionCoords.get(1) * 100 + 25, 5,5, false);
+                drawRectangle(g2d, connectionCoords.get(0) * 100, (gridSize - connectionCoords.get(1)) * 100, 5,5, false);
 
             }
 

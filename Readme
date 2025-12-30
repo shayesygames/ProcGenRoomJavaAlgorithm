@@ -10,6 +10,8 @@ This project is to test implementations of Procedural Room Generation Algorithms
    - fixed, faulty comparison issue
  - added some safety around double comparisons
  - noted connection issue for diagonal rooms, need to check/update
+12/29/25
+ - inverted Y axis on JPanel visual output so output is organized like a math coord plane
 
  Goals/Next steps
   - connection generation is still flawed with diagonal rooms

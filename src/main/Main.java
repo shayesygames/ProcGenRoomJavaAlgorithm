@@ -12,13 +12,15 @@ import javax.swing.*;
 
 public class Main {
     int currentRoomId;
+    int gridSize;
 
     void main() {
         currentRoomId = 0;
         //create root room at 0,0 on coord plane with starting size
         RoomInfo roomInfo = new RoomInfo();
-        roomInfo.setHeight(5);
-        roomInfo.setWidth(5);
+        gridSize = 5;
+        roomInfo.setHeight(gridSize);
+        roomInfo.setWidth(gridSize);
         roomInfo.setOriginY(0);
         roomInfo.setOriginX(0);
         roomInfo.setRoomId(currentRoomId++);
@@ -46,9 +48,12 @@ public class Main {
         }
 
         //render results to visual
+        //currently (due to reversing to Y axis in JPanel), Y coords are inverted so that
+        //the displayed result looks like a math coord plane (origin at bottom left instead
+        //of top left), will need to be updated for different sizes
         JFrame map = new JFrame("Graph result");
         map.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        map.add(new MapRenderer(leaves));
+        map.add(new MapRenderer(leaves, gridSize));
         map.setSize(750, 750);
         map.setVisible(true);
 

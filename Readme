@@ -12,6 +12,10 @@ This project is to test implementations of Procedural Room Generation Algorithms
  - noted connection issue for diagonal rooms, need to check/update
 12/29/25
  - inverted Y axis on JPanel visual output so output is organized like a math coord plane
+ 1/1/26
+ - finished the logic for drawing connections between rooms
+ - implemented tests for creating connections between rooms, added several diagonal cases that should be failing the unit test, but are not currently, need to look into this further
+
 
  Goals/Next steps
   - connection generation is still flawed with diagonal rooms

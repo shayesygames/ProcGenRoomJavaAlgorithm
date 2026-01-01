@@ -17,12 +17,8 @@ public class Main {
     void main() {
         currentRoomId = 0;
         //create root room at 0,0 on coord plane with starting size
-        RoomInfo roomInfo = new RoomInfo();
         gridSize = 5;
-        roomInfo.setHeight(gridSize);
-        roomInfo.setWidth(gridSize);
-        roomInfo.setOriginY(0);
-        roomInfo.setOriginX(0);
+        RoomInfo roomInfo = new RoomInfo(0, 0, gridSize, gridSize);
         roomInfo.setRoomId(currentRoomId++);
 
         //create rooms from root area
@@ -66,12 +62,12 @@ public class Main {
         List<Node> remainingAvailableConnections = new ArrayList<>(leaves);
 
         for (Node currentNode : leaves) {
-            List<Edge> currentNodeEdgeList = getEdges(currentNode);
+            List<Edge> currentNodeEdgeList = currentNode.getEdges();
             for (Node connectionCandidate : remainingAvailableConnections) {
                 //check if new rooms can be connected (are adjacent) and do not
                 //already have connections
                 if (!currentNode.equals(connectionCandidate)) {
-                    List<Edge> eligibleCandidateEdgeList = getEdges(connectionCandidate);
+                    List<Edge> eligibleCandidateEdgeList = connectionCandidate.getEdges();
                     createConnections(currentNode, connectionCandidate, currentNodeEdgeList, eligibleCandidateEdgeList);
                 }
             }
@@ -122,30 +118,6 @@ public class Main {
             }
         }
 
-    }
-
-    //Returns a list of 4 Edges, which represent the 4 walls of the room
-    //based off of origin, length, and height
-    private List<Edge> getEdges(Node node) {
-        RoomInfo currentRoom = node.getRoomInfo();
-        Edge edge1 = new Edge(currentRoom.getOriginX(),
-                currentRoom.getOriginX() + currentRoom.getWidth(),
-                currentRoom.getOriginY(),
-                currentRoom.getOriginY());
-        Edge edge2 = new Edge(currentRoom.getOriginX(),
-                currentRoom.getOriginX(),
-                currentRoom.getOriginY(),
-                currentRoom.getOriginY() + currentRoom.getHeight());
-        Edge edge3 = new Edge(currentRoom.getOriginX() + currentRoom.getWidth(),
-                currentRoom.getOriginX(),
-                currentRoom.getOriginY() + currentRoom.getHeight(),
-                currentRoom.getOriginY() + currentRoom.getHeight());
-        Edge edge4 = new Edge(currentRoom.getOriginX() + currentRoom.getWidth(),
-                currentRoom.getOriginX() + currentRoom.getWidth(),
-                currentRoom.getOriginY() + currentRoom.getHeight(),
-                currentRoom.getOriginY());
-
-        return List.of(edge1, edge2, edge3, edge4);
     }
 
     //check that room is large enough to be divided

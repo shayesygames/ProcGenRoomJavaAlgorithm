@@ -1,5 +1,7 @@
 package BST;
 
+import java.util.List;
+
 //Implementation of BST, stores typical BST left, right and data
 //also stores connection nodes, which represent rooms that can
 //have a connection to this node on the final map, only used
@@ -113,5 +115,29 @@ public class Node {
     //check if there are rooms available
     public boolean hasFreeRoom() {
         return connectionNode1 == null || connectionNode2 == null;
+    }
+
+    //Returns a list of 4 Edges, which represent the 4 walls of the room
+    //based off of origin, height, and width
+    public List<Edge> getEdges() {
+        RoomInfo currentRoom = this.getRoomInfo();
+        Edge edge1 = new Edge(currentRoom.getOriginX(),
+                currentRoom.getOriginX() + currentRoom.getWidth(),
+                currentRoom.getOriginY(),
+                currentRoom.getOriginY());
+        Edge edge2 = new Edge(currentRoom.getOriginX(),
+                currentRoom.getOriginX(),
+                currentRoom.getOriginY(),
+                currentRoom.getOriginY() + currentRoom.getHeight());
+        Edge edge3 = new Edge(currentRoom.getOriginX() + currentRoom.getWidth(),
+                currentRoom.getOriginX(),
+                currentRoom.getOriginY() + currentRoom.getHeight(),
+                currentRoom.getOriginY() + currentRoom.getHeight());
+        Edge edge4 = new Edge(currentRoom.getOriginX() + currentRoom.getWidth(),
+                currentRoom.getOriginX() + currentRoom.getWidth(),
+                currentRoom.getOriginY() + currentRoom.getHeight(),
+                currentRoom.getOriginY());
+
+        return List.of(edge1, edge2, edge3, edge4);
     }
 }

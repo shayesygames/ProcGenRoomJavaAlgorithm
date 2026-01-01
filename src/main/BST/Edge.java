@@ -31,21 +31,6 @@ public class Edge {
     //is not shared and checks if there is a space between them or if they overlap
     //overlaps signal that the edges can facilitate a connection
     public boolean areWallsSeperated(int An1, int An2, int Bn1, int Bn2) {
-        //first we want to order these coords, if they are out of order it makes
-        //performing comparisons difficult, and an edge of (2,1)-(2,2) is identical
-        //to an edge of (2,2)-(2,1) for the purpose of these comparisons
-        if (An1 > An2) {
-            int n = An1;
-            An1 = An2;
-            An2 = n;
-        }
-
-        if (Bn1 > Bn2) {
-            int n = Bn1;
-            Bn1 = Bn2;
-            Bn2 = n;
-        }
-
         //if this pair are both less than both of the candidate pair
         //or if this pair are both greater than both of the candidate pair
         //then that means that there is not an overlap, at most there is

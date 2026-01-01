@@ -9,6 +9,18 @@ public class RoomInfo {
     int originX;
     int originY;
 
+    public RoomInfo(int originX, int originY, int height, int width) {
+        this.originX = originX;
+        this.originY = originY;
+        this.height = height;
+        this.width = width;
+    }
+
+    public RoomInfo() {
+
+    }
+
+
     public int getHeight() {
         return height;
     }

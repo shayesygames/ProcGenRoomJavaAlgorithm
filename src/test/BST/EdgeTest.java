@@ -1,6 +1,12 @@
 package BST;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 class EdgeTest {
 
@@ -42,6 +48,8 @@ class EdgeTest {
     //test same scenarios to confirm that altering the order of the
     //coords (but still preserving the same edge) does not affect
     //output
+
+    //may remove this test, not sure that re-ordering will work how I thought it would
     @Test
     void areWallsSeperatedMixedCoords() {
         Edge edge = new Edge(1,1,1,1);
@@ -129,5 +137,36 @@ class EdgeTest {
         //(x,3) (x,2) (x,5) (x,1)
         //assert walls are not seperated
         assert !edge.areWallsSeperated(3,2,5,1);
+    }
+
+    @ParameterizedTest
+    @MethodSource("roomArgs")
+    void testDiagonalConnectionShouldReturnSeperation(RoomInfo roomInfo1, RoomInfo roomInfo2) {
+        //create 2 rooms that have a corner touching
+        Node node1 = new Node(roomInfo1);
+        List<Edge> edges1 = node1.getEdges();
+
+        Node node2 = new Node(roomInfo2);
+        List<Edge> edges2 = node2.getEdges();
+
+        boolean isSeperated = true;
+
+        //compare all edges between the two rooms
+        for (Edge edge1 : edges1) {
+            for (Edge edge2 : edges2) {
+                isSeperated = !edge1.hasAdjacentWall(edge2);
+            }
+        }
+
+        //assert that wallsAreSeperated for all
+        assert isSeperated;
+    }
+
+    static Stream<Arguments> roomArgs() {
+        return Stream.of(Arguments.of(new RoomInfo(1, 0, 2, 1), new RoomInfo(2, 2, 1, 2)),
+                Arguments.of(new RoomInfo(2, 0, 1, 3), new RoomInfo(0, 1, 1, 2)),
+                Arguments.of(new RoomInfo(4, 0, 2, 1), new RoomInfo(3, 2, 2, 1)),
+                Arguments.of(new RoomInfo(2, 3, 2, 1), new RoomInfo(3, 0, 3, 1))
+                );
     }
 }

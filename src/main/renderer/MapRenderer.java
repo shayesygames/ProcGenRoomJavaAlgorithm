@@ -39,44 +39,51 @@ public class MapRenderer extends JPanel {
         for (Node currentRoom : rooms) {
             System.out.println("\n\n\nstarting connections drawing");
             if (currentRoom.getConnectionNode1() != null) {
-                double currentOriginX = currentRoom.getRoomInfo().getOriginX();
-                double currentOriginY = currentRoom.getRoomInfo().getOriginY();
-                double currentRoomWidth = currentRoom.getRoomInfo().getWidth();
-                double currentRoomHeight = currentRoom.getRoomInfo().getHeight();
-                double connectedRoomOriginX = currentRoom.getConnectionNode1().getRoomInfo().getOriginX();
-                double connectedRoomOriginY = currentRoom.getConnectionNode1().getRoomInfo().getOriginY();
-                double connectedRoomWidth = currentRoom.getConnectionNode1().getRoomInfo().getWidth();
-                double connectedRoomHeight = currentRoom.getConnectionNode1().getRoomInfo().getHeight();
-
-                double connectionOriginX;
-                double connectionOriginY;
-
-                connectionOriginX = Math.max(currentOriginX, connectedRoomOriginX);
-                connectionOriginY = Math.max(currentOriginY, connectedRoomOriginY);
-
-                System.out.printf("attempting to draw connection between %s and %s\n",
-                        currentRoom.getRoomInfo().getRoomId(),
-                        currentRoom.getConnectionNode1().getRoomInfo().getRoomId());
-                System.out.println("currentRoom origin: " + currentOriginX + ", " + currentOriginY);
-                System.out.println("connectionRoom origin: " + connectedRoomOriginX + ", " + connectedRoomOriginY);
-                System.out.println("connection origin: " + connectionOriginX + ", " + connectionOriginY);
-
-                List<Double> connectionCoords = updateConnectionOriginBasedOnAvailableConnectionSpace(connectionOriginX,
-                        connectionOriginY,
-                        currentOriginX,
-                        currentOriginY,
-                        connectedRoomOriginX,
-                        connectedRoomOriginY,
-                        currentRoomWidth,
-                        currentRoomHeight,
-                        connectedRoomWidth,
-                        connectedRoomHeight);
-
-                drawRectangle(g2d, connectionCoords.get(0) * 100, (gridSize - connectionCoords.get(1)) * 100, 5,5, false);
-
+                attemptToDrawConnectionBetweeNodes(currentRoom, currentRoom.getConnectionNode1(), g2d);
+            }
+            if (currentRoom.getConnectionNode2() != null) {
+                attemptToDrawConnectionBetweeNodes(currentRoom, currentRoom.getConnectionNode2(), g2d);
             }
 
         }
+    }
+
+    private void attemptToDrawConnectionBetweeNodes(Node currentRoom, Node connectionRoom, Graphics2D g2d) {
+        double currentOriginX = currentRoom.getRoomInfo().getOriginX();
+        double currentOriginY = currentRoom.getRoomInfo().getOriginY();
+        double currentRoomWidth = currentRoom.getRoomInfo().getWidth();
+        double currentRoomHeight = currentRoom.getRoomInfo().getHeight();
+        double connectedRoomOriginX = connectionRoom.getRoomInfo().getOriginX();
+        double connectedRoomOriginY = connectionRoom.getRoomInfo().getOriginY();
+        double connectedRoomWidth = connectionRoom.getRoomInfo().getWidth();
+        double connectedRoomHeight = connectionRoom.getRoomInfo().getHeight();
+
+        double connectionOriginX;
+        double connectionOriginY;
+
+        connectionOriginX = Math.max(currentOriginX, connectedRoomOriginX);
+        connectionOriginY = Math.max(currentOriginY, connectedRoomOriginY);
+
+        System.out.printf("\n\nattempting to draw connection between %s and %s\n",
+                currentRoom.getRoomInfo().getRoomId(),
+                connectionRoom.getRoomInfo().getRoomId());
+        System.out.println("currentRoom origin: " + currentOriginX + ", " + currentOriginY);
+        System.out.println("connectionRoom origin: " + connectedRoomOriginX + ", " + connectedRoomOriginY);
+        System.out.println("connection origin: " + connectionOriginX + ", " + connectionOriginY);
+
+        List<Double> connectionCoords = updateConnectionOriginBasedOnAvailableConnectionSpace(connectionOriginX,
+                connectionOriginY,
+                currentOriginX,
+                currentOriginY,
+                connectedRoomOriginX,
+                connectedRoomOriginY,
+                currentRoomWidth,
+                currentRoomHeight,
+                connectedRoomWidth,
+                connectedRoomHeight);
+
+        //also inverted y here, again this may be too much trouble...
+        drawRectangle(g2d, connectionCoords.get(0) * 100, (gridSize - connectionCoords.get(1)) * 100, 5,5, false);
     }
 
     private List<Double> updateConnectionOriginBasedOnAvailableConnectionSpace(double newOriginX,
@@ -119,16 +126,12 @@ public class MapRenderer extends JPanel {
 
         //Case 1:
         if (currentSharedX && connectionSharedX) {
-            System.out.println("Case 1 shared X");
             newOriginX = newOriginX + (Math.min(currentWidth, connectionWidth) / 2);
         } else if (currentSharedY && connectionSharedY) {
-            System.out.println("Case 1 shared Y");
             newOriginY = newOriginY + (Math.min(currentHeight, connectionHeight) / 2);
         } else {
             //Case 2:
-            System.out.println("Case 2");
             if (currentSharedX && currentSharedY) {
-                System.out.println("current origin == connection origin");
                 //rooms share a vertical wall, modify Y
                 if (areDoublesEqual(currentOriginX, connectedRoomOriginX + connectionWidth)) {
                     double connectionMaxY = connectedRoomOriginY + connectionHeight;
@@ -148,7 +151,6 @@ public class MapRenderer extends JPanel {
                     newOriginX = newOriginX + newWidth;
                 }
             } else if (connectionSharedX && connectionSharedY) {
-                System.out.println("connectionRoom origin == connection origin");
                 //share vertical wall, modify Y
                 if (areDoublesEqual(connectedRoomOriginX, currentOriginX + currentWidth)) {
                     double connectionMaxY = connectedRoomOriginY + connectionHeight;
@@ -172,19 +174,47 @@ public class MapRenderer extends JPanel {
             //Case 3:
             else {
                 if (currentSharedX && connectionSharedY) {
-                    //figure out vertical or horizontal connections
-                    if (newOriginX >= currentOriginX + currentWidth) {
-
+                    //vertical connection, modify Y
+                    if (connectedRoomOriginX + connectionWidth <= currentOriginX
+                        || currentOriginX + currentWidth <= connectedRoomOriginX) {
+                        if (connectedRoomOriginY + connectionHeight <= currentOriginY + currentHeight) {
+                            newOriginY = newOriginY + (connectionHeight / 2);
+                        } else {
+                            newOriginY = newOriginY + ((currentOriginY + currentHeight - connectedRoomOriginY - connectionHeight) / 2);
+                        }
+                    } //horizontal connection, modify X
+                    else if (connectedRoomOriginY + connectionHeight <= currentOriginY
+                        || currentOriginY + currentHeight <= connectedRoomOriginY) {
+                        if (currentOriginX + currentWidth <= connectedRoomOriginX + connectionWidth) {
+                            newOriginX = newOriginX + (currentWidth / 2);
+                        } else {
+                            newOriginX = newOriginX + ((currentOriginX + currentWidth - connectedRoomOriginX - connectionWidth) / 2);
+                        }
                     }
 
-                    //check against current dimensions
-
-                } else if (connectionSharedX && currentSharedY) {
-
+                } else if (currentSharedY && connectionSharedX) {
+                    //vertical connection, modify Y
+                    if (connectedRoomOriginX + connectionWidth <= currentOriginX
+                            || currentOriginX + currentWidth <= connectedRoomOriginX) {
+                        if (currentOriginY + currentHeight <= connectedRoomOriginY + connectionHeight) {
+                            newOriginY = newOriginY + (currentHeight / 2);
+                        } else {
+                            newOriginY = newOriginY + ((connectedRoomOriginY + connectionHeight - currentOriginY - currentHeight) / 2);
+                        }
+                    } //horizontal connection, modify X
+                    else if (connectedRoomOriginY + connectionHeight <= currentOriginY
+                            || currentOriginY + currentHeight <= connectedRoomOriginY) {
+                        if (connectedRoomOriginX + connectionWidth <= currentOriginX + currentWidth) {
+                            newOriginX = newOriginX + (connectionWidth / 2);
+                        } else {
+                            newOriginX = newOriginX + ((connectedRoomOriginX + connectionWidth - currentOriginX - currentWidth) / 2);
+                        }
+                    }
                 }
             }
-        }
 
+        }
+        System.out.println("new newOrigin (" + newOriginX + ", " + newOriginY + ")");
         return List.of(newOriginX, newOriginY);
     }
 

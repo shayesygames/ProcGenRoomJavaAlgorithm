@@ -20,28 +20,31 @@ public class Main {
         gridSize = 10;
         RoomInfo roomInfo = new RoomInfo(0, 0, gridSize, gridSize);
         roomInfo.setRoomId(currentRoomId++);
+        Node root;
+        List<Node> leaves;
 
         //create rooms from root area
-        Node root = new Node(roomInfo);
-        createRooms(root);
+        do {
+            root = new Node(roomInfo);
+            createRooms(root);
 
-        //print rooms made without connections
-        List<Node> leaves = getLeaves(root);
-        System.out.println("Pre connections Rooms");
-        for (Node node : leaves) {
-            node.printRoomInfo();
-            System.out.println();
-        }
+            //print rooms made without connections
+            leaves = getLeaves(root);
+            System.out.println("Pre connections Rooms");
+            for (Node node : leaves) {
+                node.printRoomInfo();
+            }
 
-        //attempt to connect leaf rooms to each other, attempts to connect to up to 2 adjacent rooms
-        buildConnectionsForRooms(leaves);
+            //attempt to connect leaf rooms to each other, attempts to connect to up to 2 adjacent rooms
+            buildConnectionsForRooms(leaves);
 
-        //print text output of final rooms and their connections
-        System.out.println("Post connections");
-        for (Node node : leaves) {
-            node.printRoomInfo();
-            System.out.println();
-        }
+            //print text output of final rooms and their connections
+            System.out.println("Post connections");
+            for (Node node : leaves) {
+                node.printRoomInfo();
+            }
+        } while (allRoomsAreNotConnected(root));
+
 
         //render results to visual
         //currently (due to reversing to Y axis in JPanel), Y coords are inverted so that
@@ -87,7 +90,7 @@ public class Main {
 
             //check if remaining space is enough for a new room
             boolean canDivide = checkDimensions(currentNode);
-            if (canDivide) {
+            if (canDivide && allowRoomToDivide(currentNode)) {
                 //divide current node into two new nodes, set those as the Node children
                 List<Node> newNodes = divideNodes(currentNode);
                 currentNode.setLeftNode(newNodes.get(0));
@@ -99,25 +102,47 @@ public class Main {
         }
     }
 
-    //attempts to create a connection between two Nodes, including checking
-    //if connection is possible
-    //compares all edges for rooms, represented as two connected vertexes (x1, y1), (x2, y2)
-    private void createConnections(Node currentNode, Node connectionCandidate, List<Edge> currentEdges, List<Edge> candidateEdges) {
-        if (currentNode.hasFreeRoom() && connectionCandidate.hasFreeRoom()) {
-            for (Edge edge1 : currentEdges) {
-                for (Edge edge2 : candidateEdges) {
-                    //check that nodes aren't already connected
-                    //check that nodes share a wall that can have a connection door
-                    if (!currentNode.isAlreadyConnected(connectionCandidate)
-                            && edge1.hasAdjacentWall(edge2)) {
-                        //make each room connected to each other
-                        currentNode.addConnectingRoom(connectionCandidate);
-                        connectionCandidate.addConnectingRoom((currentNode));
-                    }
-                }
+    private boolean allRoomsAreNotConnected(Node root) {
+        List<Node> rooms = getLeaves(root);
+        List<Node> roomsToTraverse = new ArrayList<>();
+        roomsToTraverse.add(rooms.removeFirst());
+        List<String> visitedRooms = new ArrayList<>();
+        visitedRooms.add(roomsToTraverse.getFirst().getRoomInfo().getRoomId());
+
+        while (!roomsToTraverse.isEmpty()) {
+            Node currentRoom = roomsToTraverse.removeFirst();
+            //if current room has a connection and that connection has not already been visited
+            //add it to rooms to visit and mark it as visited
+            if (currentRoom.getConnectionNode1() != null && !visitedRooms.contains(currentRoom.getConnectionNode1().getRoomInfo().getRoomId())) {
+                roomsToTraverse.add(currentRoom.getConnectionNode1());
+                visitedRooms.add(currentRoom.getConnectionNode1().getRoomInfo().getRoomId());
+            }
+            if (currentRoom.getConnectionNode2() != null && !visitedRooms.contains(currentRoom.getConnectionNode2().getRoomInfo().getRoomId())) {
+                roomsToTraverse.add(currentRoom.getConnectionNode2());
+                visitedRooms.add(currentRoom.getConnectionNode2().getRoomInfo().getRoomId());
             }
         }
 
+        List<String> allRooms = new ArrayList<>();
+        for (Node node : rooms) {
+            allRooms.add(node.getRoomInfo().getRoomId());
+        }
+
+        if (!visitedRooms.containsAll(allRooms)) {
+            System.out.println("Not all rooms connected");
+        }
+
+        return !visitedRooms.containsAll(allRooms);
+    }
+
+    //randomly decide if room that is capable of dividing should divide
+    //larger rooms will be more likely to divide (99.99% for a 10x10 room to divide)
+    //smaller rooms less likely to divide (25% for a 2x2 to divide)
+    private boolean allowRoomToDivide(Node currentNode) {
+        RoomInfo currentRoom = currentNode.getRoomInfo();
+        boolean heightAllowed = ThreadLocalRandom.current().nextInt(1, (currentRoom.getHeight() * 4) + 1) != 1;
+        boolean widthAllowed = ThreadLocalRandom.current().nextInt(1, (currentRoom.getWidth() * 4) + 1) != 1;
+        return heightAllowed && widthAllowed;
     }
 
     //check that room is large enough to be divided
@@ -145,6 +170,27 @@ public class Main {
         }
 
         return resultList;
+    }
+
+    //attempts to create a connection between two Nodes, including checking
+    //if connection is possible
+    //compares all edges for rooms, represented as two connected vertexes (x1, y1), (x2, y2)
+    private void createConnections(Node currentNode, Node connectionCandidate, List<Edge> currentEdges, List<Edge> candidateEdges) {
+        if (currentNode.hasFreeRoom() && connectionCandidate.hasFreeRoom()) {
+            for (Edge edge1 : currentEdges) {
+                for (Edge edge2 : candidateEdges) {
+                    //check that nodes aren't already connected
+                    //check that nodes share a wall that can have a connection door
+                    if (!currentNode.isAlreadyConnected(connectionCandidate)
+                            && edge1.hasAdjacentWall(edge2)) {
+                        //make each room connected to each other
+                        currentNode.addConnectingRoom(connectionCandidate);
+                        connectionCandidate.addConnectingRoom((currentNode));
+                    }
+                }
+            }
+        }
+
     }
 
     // create new nodes, update coords and length + width of new rooms

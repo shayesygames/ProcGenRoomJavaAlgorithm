@@ -37,8 +37,8 @@ public class MapRenderer extends JPanel {
         }
 
         //draw connections
+        System.out.println("\n\n\nstarting connections drawing");
         for (Node currentRoom : rooms) {
-            System.out.println("\n\n\nstarting connections drawing");
             if (currentRoom.getConnectionNode1() != null) {
                 attemptToDrawConnectionBetweeNodes(currentRoom, currentRoom.getConnectionNode1(), g2d);
             }
@@ -64,13 +64,6 @@ public class MapRenderer extends JPanel {
 
         connectionOriginX = Math.max(currentOriginX, connectedRoomOriginX);
         connectionOriginY = Math.max(currentOriginY, connectedRoomOriginY);
-
-        System.out.printf("\n\nattempting to draw connection between %s and %s\n",
-                currentRoom.getRoomInfo().getRoomId(),
-                connectionRoom.getRoomInfo().getRoomId());
-        System.out.println("currentRoom origin: " + currentOriginX + ", " + currentOriginY);
-        System.out.println("connectionRoom origin: " + connectedRoomOriginX + ", " + connectedRoomOriginY);
-        System.out.println("connection origin: " + connectionOriginX + ", " + connectionOriginY);
 
         List<Double> connectionCoords = updateConnectionOriginBasedOnAvailableConnectionSpace(connectionOriginX,
                 connectionOriginY,
@@ -197,7 +190,6 @@ public class MapRenderer extends JPanel {
             }
 
         }
-        System.out.println("new newOrigin (" + newOriginX + ", " + newOriginY + ")");
         return List.of(newOriginX, newOriginY);
     }
 

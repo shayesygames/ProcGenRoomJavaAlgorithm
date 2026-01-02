@@ -56,14 +56,9 @@ public class Node {
         return roomInfo;
     }
 
-    public void setRoomInfo(RoomInfo roomInfo) {
-        this.roomInfo = roomInfo;
-    }
-
     //connect new node to this node to available node
     public void addConnectingRoom(Node nodeToConnect) {
         if (connectionNode1 != null && connectionNode2 != null) {
-            System.out.println("No connections available");
             return;
         }
 

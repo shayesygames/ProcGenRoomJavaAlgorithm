@@ -15,14 +15,12 @@ This project is to test implementations of Procedural Room Generation Algorithms
  1/1/26
  - finished the logic for drawing connections between rooms
  - implemented tests for creating connections between rooms, added several diagonal cases that should be failing the unit test, but are not currently, need to look into this further
+1/2/26
+ - updated diagonal connection determination, should not give more false positives
+ - added some randomness to room size, done by allowing rooms to choose not to divide even if there is space to divide
+ - added a traversal of completed rooms at the end of connection creation to make sure that all rooms are reachable from any room
+ - cleanups
 
 
  Goals/Next steps
-  - connection generation is still flawed with diagonal rooms
-  - Added initial renderer, still does not cover all cases for types of connections, needs work
-    - part of this issue is due to renderer visually displaying inverted y values as part of JPanel, look into reversing these
-    - issue looks like it is with case 1...potential bad inputs in the method call since case 1 is so simple?
-    - add debug statements to figure out what is happening for each comparison
-    - maybe this is not actually an error, just uncompleted case 3 causing default values to return
-  - implement rooms that can have randomized sizes, aka rooms that will not always have one wall of the minimum length
   - update division method to allow that a room with length > minimum size and height = minimum size are able to be divided, but only by length

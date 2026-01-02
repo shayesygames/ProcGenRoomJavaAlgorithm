@@ -150,7 +150,6 @@ class EdgeTest {
         boolean isSeperated = true;
 
         //compare all edges between the two rooms
-        System.out.println("start evaluation for Rooms " + roomInfo1.getRoomId() + " and " + roomInfo2.getRoomId());
         for (Edge edge1 : edges1) {
             for (Edge edge2 : edges2) {
                 isSeperated = !edge1.hasAdjacentWall(edge2);

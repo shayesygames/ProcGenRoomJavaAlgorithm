@@ -1,6 +1,7 @@
 package renderer;
 
 import BST.Node;
+import MathHelpers.MathHelperUtil;
 
 import java.util.List;
 
@@ -26,11 +27,11 @@ public class MapRenderer extends JPanel {
 
         //draw rooms
         for (Node currentRoom : rooms) {
-            int roomWidth = currentRoom.getRoomInfo().getWidth() * 100;
-            int roomHeight = currentRoom.getRoomInfo().getHeight() * 100;
-            int roomX = currentRoom.getRoomInfo().getOriginX() * 100;
+            int roomWidth = currentRoom.getRoomInfo().getWidth() * 50;
+            int roomHeight = currentRoom.getRoomInfo().getHeight() * 50;
+            int roomX = currentRoom.getRoomInfo().getOriginX() * 50;
             //here the Y coords are inverted...this may be more trouble than it's worth, may revert
-            int roomY = (gridSize - currentRoom.getRoomInfo().getOriginY() - currentRoom.getRoomInfo().getHeight()) * 100;
+            int roomY = (gridSize - currentRoom.getRoomInfo().getOriginY() - currentRoom.getRoomInfo().getHeight()) * 50;
             drawRectangle(g2d, roomX, roomY, roomWidth, roomHeight, true);
             drawId(g2d, roomX, roomY, roomWidth, roomHeight, currentRoom.getRoomInfo().getRoomId());
         }
@@ -83,7 +84,7 @@ public class MapRenderer extends JPanel {
                 connectedRoomHeight);
 
         //also inverted y here, again this may be too much trouble...
-        drawRectangle(g2d, connectionCoords.get(0) * 100, (gridSize - connectionCoords.get(1)) * 100, 5,5, false);
+        drawRectangle(g2d, connectionCoords.get(0) * 50, (gridSize - connectionCoords.get(1)) * 50, 5,5, false);
     }
 
     private List<Double> updateConnectionOriginBasedOnAvailableConnectionSpace(double newOriginX,
@@ -134,45 +135,27 @@ public class MapRenderer extends JPanel {
             if (currentSharedX && currentSharedY) {
                 //rooms share a vertical wall, modify Y
                 if (areDoublesEqual(currentOriginX, connectedRoomOriginX + connectionWidth)) {
-                    double connectionMaxY = connectedRoomOriginY + connectionHeight;
-                    double currentMaxY = currentOriginY + currentHeight;
-                    double maxYForConnection = Math.min(connectionMaxY, currentMaxY);
-                    double newHeight = ((maxYForConnection - newOriginY) / 2);
-                    //currentY is lower bound, smallest between connectionMaxY and currentMaxY is upper bound
-                    newOriginY = newOriginY + newHeight;
+                    newOriginY = MathHelperUtil.case2Calculation(newOriginY, currentOriginY, connectedRoomOriginY, currentHeight, connectionHeight);
                 }
                 //share a horizontal wall, modify X
                 else if (areDoublesEqual(currentOriginY, connectedRoomOriginY + connectionHeight)) {
-                    double connectionMaxX = connectedRoomOriginX + connectionWidth;
-                    double currentMaxX = currentOriginX + currentWidth;
-                    double maxXForConnection = Math.min(connectionMaxX, currentMaxX);
-                    double newWidth = ((maxXForConnection - newOriginX) / 2);
-                    //currentY is lower bound, smallest between connectionMaxX and currentMaxX is upper bound
-                    newOriginX = newOriginX + newWidth;
+                    newOriginX = MathHelperUtil.case2Calculation(newOriginX, currentOriginX, connectedRoomOriginX, currentWidth, connectionWidth);
                 }
             } else if (connectionSharedX && connectionSharedY) {
                 //share vertical wall, modify Y
                 if (areDoublesEqual(connectedRoomOriginX, currentOriginX + currentWidth)) {
-                    double connectionMaxY = connectedRoomOriginY + connectionHeight;
-                    double currentMaxY = currentOriginY + currentHeight;
-                    double maxYForConnection = Math.min(connectionMaxY, currentMaxY);
-                    double newHeight = ((maxYForConnection - newOriginY) / 2);
-                    //currentY is lower bound, smallest between connectionMaxY and currentMaxY is upper bound
-                    newOriginY = newOriginY + newHeight;
+                    newOriginY = MathHelperUtil.case2Calculation(newOriginY, currentOriginY, connectedRoomOriginY, currentHeight, connectionHeight);
                 }
                 //share a horizontal wall, modify X
                 else if (areDoublesEqual(connectedRoomOriginY, currentOriginY + currentHeight)) {
-                    double connectionMaxX = connectedRoomOriginX + connectionWidth;
-                    double currentMaxX = currentOriginX + currentWidth;
-                    double maxXForConnection = Math.min(connectionMaxX, currentMaxX);
-                    double newWidth = ((maxXForConnection - newOriginX) / 2);
-                    //currentY is lower bound, smallest between connectionMaxX and currentMaxX is upper bound
-                    newOriginX = newOriginX + newWidth;
+                    newOriginX = MathHelperUtil.case2Calculation(newOriginX, currentOriginX, connectedRoomOriginX, currentWidth, connectionWidth);
                 }
             }
 
             //Case 3:
             else {
+                //i'd really like to extract these to a common method, not sure if that is
+                //feasible
                 if (currentSharedX && connectionSharedY) {
                     //vertical connection, modify Y
                     if (connectedRoomOriginX + connectionWidth <= currentOriginX

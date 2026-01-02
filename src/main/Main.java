@@ -17,7 +17,7 @@ public class Main {
     void main() {
         currentRoomId = 0;
         //create root room at 0,0 on coord plane with starting size
-        gridSize = 5;
+        gridSize = 10;
         RoomInfo roomInfo = new RoomInfo(0, 0, gridSize, gridSize);
         roomInfo.setRoomId(currentRoomId++);
 

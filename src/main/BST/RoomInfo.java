@@ -16,6 +16,14 @@ public class RoomInfo {
         this.width = width;
     }
 
+    public RoomInfo(int originX, int originY, int height, int width, int roomId) {
+        this.originX = originX;
+        this.originY = originY;
+        this.height = height;
+        this.width = width;
+        this.roomId = roomId;
+    }
+
     public RoomInfo() {
 
     }
